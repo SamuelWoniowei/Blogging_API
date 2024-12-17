@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const articleSchema = new mongoose.Schema(
   {
@@ -9,6 +10,7 @@ const articleSchema = new mongoose.Schema(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     description: {
@@ -19,8 +21,12 @@ const articleSchema = new mongoose.Schema(
       enum: ["draft", "published", "archived"],
       required: true,
     },
-    reading_time: {
+    read_count: {
       type: Number,
+      default: 0,
+    },
+    reading_time: {
+      type: String,
       required: true,
     },
     body: {
@@ -34,6 +40,8 @@ const articleSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+articleSchema.plugin(mongoosePaginate);
 
 const Article = mongoose.model("Article", articleSchema);
 export default Article;

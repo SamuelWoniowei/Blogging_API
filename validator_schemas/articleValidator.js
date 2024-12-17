@@ -22,19 +22,6 @@ const articleSchema = Joi.object({
     "string.min": "Author should have a minimum length of {#limit}",
     "string.max": "Author should have a maximum length of {#limit}",
   }),
-
-  read_count: Joi.number().integer().min(0).messages({
-    "number.base": "Read count should be a number",
-    "number.integer": "Read count should be an integer",
-    "number.min": "Read count cannot be negative",
-  }),
-
-  reading_time: Joi.number().integer().min(1).messages({
-    "number.base": "Reading time should be a number",
-    "number.integer": "Reading time should be an integer",
-    "number.min": "Reading time should be at least 1 minute",
-  }),
-
   tags: Joi.array().items(Joi.string()).messages({
     "array.base": "Tags should be an array of strings",
   }),

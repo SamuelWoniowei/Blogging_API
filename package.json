@@ -6,17 +6,20 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "jest"
+    "test": "NODE_ENV=test jest --runInBand --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "argon2": "^0.41.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "joi": "^17.13.3",
-    "mongoose": "^8.8.4"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.4",
+    "mongoose-paginate-v2": "^1.8.5"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.0",

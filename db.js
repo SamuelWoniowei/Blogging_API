@@ -1,3 +1,4 @@
+import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 
 const connectDB = async () => {
@@ -10,4 +11,18 @@ const connectDB = async () => {
   }
 };
 
-export default connectDB;
+const connectTestDB = async () => {
+  try {
+    await mongoose.disconnect();
+    const mongoServer = await MongoMemoryServer.create();
+    const mongoUri = mongoServer.getUri();
+    console.log(mongoUri);
+    await mongoose.connect(mongoUri);
+    console.log("mongoserver: ", mongoServer);
+    return mongoServer;
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
+  }
+};
+
+export { connectDB, connectTestDB };

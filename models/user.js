@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { hashPassword } from "../helpers/hashPassword.js";
 
 const userSchema = mongoose.Schema(
   {
@@ -22,6 +23,13 @@ const userSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  }
+  this.password = await hashPassword(this.password, 10);
+});
 
 const User = mongoose.model("User", userSchema);
 export default User;
