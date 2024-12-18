@@ -57,7 +57,6 @@ export const getArticles = async (req, res) => {
     }
 
     const skip = (options.page - 1) * options.limit;
-    console.log(filter);
     const articles = await Article.find(filter)
       .populate("author", "first_name last_name email")
       .sort(sortFilter)
@@ -133,7 +132,7 @@ export const publishArticle = async (req, res) => {
       );
     }
 
-    article.state = "published";
+    article.state = article.state === "draft" ? "published" : "draft";
     const updatedArticle = await article.save();
 
     return handleSuccess(res, "Article published successfully", updatedArticle);
