@@ -91,12 +91,9 @@ export const getArticle = async (req, res) => {
 
 export const deleteArticle = async (req, res) => {
   const { id } = req.params;
-  const { userId } = req.body;
+  const userId = req.user.id;
 
   try {
-    if (!userId) {
-      return handleForbidden(res, "You are not allowed to delete this article");
-    }
     const article = await checkArticleExistence(id, res);
     if (!article) return;
 
@@ -113,18 +110,12 @@ export const deleteArticle = async (req, res) => {
 
 export const publishArticle = async (req, res) => {
   const { id } = req.params;
-  const { userId } = req.body;
+  const userId  = req.user.id;
 
   try {
     const article = await checkArticleExistence(id, res);
     if (!article) return;
 
-    if (!userId) {
-      return handleForbidden(
-        res,
-        "You are not allowed to publish this article"
-      );
-    }
     if (!article.author._id.equals(userId)) {
       return handleForbidden(
         res,

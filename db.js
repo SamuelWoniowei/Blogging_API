@@ -1,8 +1,5 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const connectDB = async () => {
   try {
@@ -16,15 +13,16 @@ const connectDB = async () => {
 
 const connectTestDB = async () => {
   try {
-    await mongoose.disconnect();
+    if (mongoose.connection.readyState) {
+      await mongoose.disconnect();
+    }
+
     const mongoServer = await MongoMemoryServer.create();
     const mongoUri = mongoServer.getUri();
-    console.log(mongoUri);
     await mongoose.connect(mongoUri);
-    console.log("mongoserver: ", mongoServer);
     return mongoServer;
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    console.error(``);
   }
 };
 

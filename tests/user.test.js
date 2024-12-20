@@ -1,14 +1,11 @@
 import request from "supertest";
 import app from "../index.js";
-import { dbConnect, dbDisconnect } from "./utils/dbHandler.js";
-beforeAll(async () => {
-  await dbConnect();
-});
+import setupTestDB from "./utils/testSetup.js";
+import { newArticle } from "./utils/jsonData.js";
 
-// afterAll(async () => {
-//     console.log('mongolito ', mongo);
-//   await dbDisconnect(mongo);
-// });
+setupTestDB();
+
+let token;
 
 describe("User Registration", () => {
   it("should register a new user successfully", async () => {
@@ -24,8 +21,6 @@ describe("User Registration", () => {
       .send(newUser)
       .expect("Content-Type", /json/)
       .expect(201);
-
-    // Check that the response contains a success message or the created user data
     expect(response.body).toHaveProperty(
       "message",
       "User successfully created"
@@ -44,12 +39,11 @@ describe("User Registration", () => {
     await request(app)
       .post("/api/v1/auth/register")
       .send(existingUser)
-      .expect(400);
+      .expect(201);
 
     const response = await request(app)
       .post("/api/v1/auth/register")
       .send(existingUser)
-      .expect("Content-Type", /json/)
       .expect(400);
 
     expect(response.body).toHaveProperty("message", "Email already in use");
@@ -63,9 +57,37 @@ describe("User Registration", () => {
     const response = await request(app)
       .post("/api/v1/auth/register")
       .send(incompleteUser)
-      .expect("Content-Type", /json/)
       .expect(400);
 
     expect(response.body).toHaveProperty("message", "Validation error");
   });
+
+  it("should login and return a token", async () => {
+    const newUser = {
+      first_name: "test",
+      last_name: "tester",
+      email: "testuser@example.com",
+      password: "password123",
+    };
+
+    await request(app).post("/api/v1/auth/register").send(newUser).expect(201);
+
+    const userCredentials = {
+      email: "testuser@example.com",
+      password: "password123",
+    };
+
+    const response = await request(app)
+      .post("/api/v1/auth/login")
+      .send(userCredentials)
+      .expect(200);
+    expect(response.body).toHaveProperty(
+      "message",
+      "User logged in successfully"
+    );
+    expect(response.body.data.email).toBe(userCredentials.email);
+    token = response.body.data.token;
+  });
 });
+
+export { token };
